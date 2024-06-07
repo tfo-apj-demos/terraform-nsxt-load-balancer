@@ -3,10 +3,26 @@ variable "name" {
   description = "The name to use for configured resources."
 }
 
-variable "tier1_gateway" {
-  type        = string
-  description = "The Tier1 gateway where the load balancer will be created."
-  default     = "Tier1"
+variable "tier0_gateway" {
+  type = string
+  description = "The Tier0 gateway to attach the T1 gateway to."
+  default = "Provider-LR"
+}
+
+variable "edge_cluster" {
+  type = string
+  description = ""
+  default = "edge-cluster"
+}
+
+variable "pool_allocation" {
+  type = string
+  description = ""
+  default = "LB_SMALL"
+  validation {
+    condition     = contains(["LB_SMALL", "LB_MEDIUM", "LB_LARGE", "LB_XLARGE"], upper(var.pool_allocation))
+    error_message = "Value must be one of LB_SMALL, LB_MEDIUM, LB_LARGE, LB_XLARGE."
+  }
 }
 
 variable "lb_app_profile_id" {

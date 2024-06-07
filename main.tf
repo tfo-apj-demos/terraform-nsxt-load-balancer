@@ -1,5 +1,16 @@
-data "nsxt_policy_tier1_gateway" "this" {
-  display_name = var.tier1_gateway
+data "nsxt_policy_tier0_gateway" "this" {
+  display_name = var.tier0_gateway
+}
+
+data "nsxt_policy_edge_cluster" "this" {
+  display_name = var.edge_cluster
+}
+
+resource "nsxt_policy_tier1_gateway" "this" {
+  display_name = "${var.name}-lb"
+  tier0_path = data.nsxt_policy_tier0_gateway.this.path
+  pool_allocation = upper(var.pool_allocation)
+  edge_cluster_path = data.nsxt_policy_edge_cluster.this.path
 }
 
 data "nsxt_policy_lb_app_profile" "this" {
@@ -21,7 +32,7 @@ data "nsxt_policy_lb_app_profile" "this" {
 
 resource "nsxt_policy_lb_service" "this" {
   display_name      = var.name
-  connectivity_path = data.nsxt_policy_tier1_gateway.this.path
+  connectivity_path = nsxt_policy_tier1_gateway.this.path
   size              = var.load_balancer_size
   error_log_level   = var.error_log_level
   enabled           = var.load_balancer_enabled
